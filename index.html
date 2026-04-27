@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#080808"/>
+  <meta name="description" content="Trending Photography by Lavkush – Capturing Happy Moments That Last Forever. Wedding, Birthday & Anniversary shoots."/>
+  <title>Trending Photography by Lavkush</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <!-- Open Graph -->
+  <meta property="og:title" content="Trending Photography by Lavkush"/>
+  <meta property="og:description" content="Capturing Happy Moments That Last Forever"/>
+  <meta property="og:type" content="website"/>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div class="spinner" style="width:40px;height:40px;border-width:3px"></div>
+    <div style="font-size:0.78rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase">Please wait...</div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="Portfolio"/>
+  <div id="lightboxPlaceholder"></div>
+</div>
+
+<!-- ── ADD BOOKING MODAL (Admin) ── -->
+<div class="modal" id="addBookingModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">
+      Add Manual Booking
+      <button class="modal-close" onclick="closeModal('addBookingModal')">✕</button>
+    </div>
+    <form onsubmit="addManualBooking(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Name *</label>
+          <input class="form-input" id="manualName" type="text" placeholder="Client name" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone *</label>
+          <input class="form-input" id="manualPhone" type="tel" placeholder="Phone number" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Event *</label>
+          <select class="form-select" id="manualEvent" required>
+            <option value="">Select</option>
+            <option>Wedding</option>
+            <option>Pre-wedding</option>
+            <option>Birthday</option>
+            <option>Anniversary</option>
+            <option>Baby Shower</option>
+            <option>Engagement</option>
+            <option>Corporate</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input class="form-input no-min" id="manualDate" type="date" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input class="form-input" id="manualLocation" type="text" placeholder="Venue / City"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Package</label>
+        <select class="form-select" id="manualPackage">
+          <option value="basic">Basic</option>
+          <option value="standard">Standard</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="manualNotes" placeholder="Special requirements..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-gold btn-full">✦ Add Booking</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     TOP NAVIGATION
+══════════════════════════════════ -->
+<nav class="top-nav" id="topNav">
+  <a class="nav-brand" href="#" onclick="navigateTo('home');return false;">
+    <div class="nav-logo">T</div>
+    <div class="nav-brand-text">
+      <span class="nav-brand-name">Trending</span>
+      <span class="nav-brand-tag">Photography</span>
+    </div>
+  </a>
+  <div class="nav-actions">
+    <a href="https://wa.me/919876543210" target="_blank" class="nav-user-btn" title="WhatsApp">💬</a>
+    <button class="nav-user-btn" id="navAuthBtn" title="Account" onclick="navigateTo('auth')">👤</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════
+     BOTTOM NAVIGATION
+══════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="bottom-nav-item active" data-page="home" onclick="navigateTo('home')">
+    <span class="bottom-nav-icon">🏠</span>Home
+  </button>
+  <button class="bottom-nav-item" data-page="portfolio" onclick="navigateTo('portfolio')">
+    <span class="bottom-nav-icon">🖼</span>Portfolio
+  </button>
+  <button class="bottom-nav-item" data-page="booking" onclick="navigateTo('booking')">
+    <span class="bottom-nav-icon" style="font-size:1.8rem;color:var(--gold)">📸</span>Book
+  </button>
+  <button class="bottom-nav-item" data-page="dashboard" onclick="navigateTo('dashboard')">
+    <span class="bottom-nav-icon">📋</span>My Bookings
+  </button>
+  <button class="bottom-nav-item hidden" data-page="admin" onclick="navigateTo('admin')">
+    <span class="bottom-nav-icon">⚙️</span>Admin
+  </button>
+  <button class="bottom-nav-item" data-page="auth" onclick="navigateTo('auth')">
+    <span class="bottom-nav-icon">👤</span>Account
+  </button>
+</nav>
+
+<!-- WhatsApp Float -->
+<a class="whatsapp-float" href="https://wa.me/919876543210?text=Hi%20Trending%20Photography!%20I%27d%20like%20to%20know%20more%20about%20your%20services." target="_blank" title="Chat on WhatsApp">💬</a>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="page-content">
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-fallback"></div>
+      <div class="hero-video-wrap" id="heroVideoWrap" style="display:none">
+        <video autoplay muted loop playsinline id="heroVideo">
+          <source src="assets/hero.mp4" type="video/mp4"/>
+        </video>
+      </div>
+      <div class="hero-particles" id="heroParticles"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">✦ Est. Since 2018 ✦</div>
+        <h1 class="hero-title">
+          Trending<br/>
+          <span class="hero-title-accent">Photography</span>
+        </h1>
+        <div style="text-align:center;margin-bottom:6px;opacity:0;animation:fade-in 0.8s 0.6s forwards">
+          <span style="font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted)">by Lavkush</span>
+        </div>
+        <p class="hero-tagline">"Capturing Happy Moments That Last Forever"</p>
+        <p class="hero-tagline-hindi">✦ Aapki Kahani, Hamari Nazar Se ✦</p>
+        <div class="hero-cta">
+          <button class="btn btn-gold btn-lg" onclick="navigateTo('booking')">
+            📸 Book Your Session
+          </button>
+          <button class="btn btn-ghost" onclick="navigateTo('portfolio')">
+            View Portfolio ↓
+          </button>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <div class="hero-scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" style="background:var(--bg-dark)">
+      <div class="container">
+        <div class="section-header fade-up">
+          <div class="section-subtitle">✦ What We Offer</div>
+          <h2 class="section-title">Our <span class="italic-accent">Services</span></h2>
+          <div class="gold-divider"></div>
+          <p style="color:var(--text-secondary);font-size:0.88rem;margin-top:12px">Every frame tells a story. Every moment becomes a memory.</p>
+        </div>
+        <div class="services-grid">
+          <div class="card service-card fade-up">
+            <span class="service-icon">💍</span>
+            <div class="service-title">Wedding Shoots</div>
+            <div class="service-desc">Capturing the most sacred day of your life with elegance and emotion.</div>
+          </div>
+          <div class="card service-card fade-up">
+            <span class="service-icon">❤️</span>
+            <div class="service-title">Pre-Wedding</div>
+            <div class="service-desc">Beautiful couple shoots that celebrate your love story.</div>
+          </div>
+          <div class="card service-card fade-up">
+            <span class="service-icon">🎂</span>
+            <div class="service-title">Birthday Shoots</div>
+            <div class="service-desc">Make every birthday milestone unforgettable with stunning photography.</div>
+          </div>
+          <div class="card service-card fade-up">
+            <span class="service-icon">🥂</span>
+            <div class="service-title">Anniversary</div>
+            <div class="service-desc">Celebrate years of love with a photoshoot that speaks your journey.</div>
+          </div>
+          <div class="card service-card fade-up">
+            <span class="service-icon">🍼</span>
+            <div class="service-title">Baby Shower</div>
+            <div class="service-desc">Tender moments captured as you welcome your little bundle of joy.</div>
+          </div>
+          <div class="card service-card fade-up">
+            <span class="service-icon">🏢</span>
+            <div class="service-title">Corporate Events</div>
+            <div class="service-desc">Professional photography for your corporate occasions and milestones.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO PREVIEW -->
+    <section id="portfolio-preview">
+      <div class="container">
+        <div class="section-header fade-up">
+          <div class="section-subtitle">✦ Our Work</div>
+          <h2 class="section-title">Recent <span class="italic-accent">Captures</span></h2>
+          <div class="gold-divider"></div>
+        </div>
+        <div class="portfolio-grid" style="margin-top:24px">
+          <div class="portfolio-item" style="grid-column:span 2;aspect-ratio:16/9" onclick="navigateTo('portfolio')">
+            <div class="portfolio-placeholder" style="height:100%;background:linear-gradient(135deg,#1a0a1a,rgba(201,168,76,0.1))">
+              <div class="icon" style="font-size:3rem">💍</div>
+              <div style="font-family:var(--font-display);font-size:1.1rem">Royal Wedding</div>
+              <div style="font-size:0.72rem;color:var(--text-muted)">Wedding Collection</div>
+            </div>
+            <div class="portfolio-overlay"><span class="portfolio-label">⊞ View Gallery</span></div>
+          </div>
+          <div class="portfolio-item" onclick="navigateTo('portfolio')">
+            <div class="portfolio-placeholder" style="height:100%;background:linear-gradient(135deg,#0a1a0a,rgba(201,168,76,0.07))">
+              <div class="icon" style="font-size:2rem">❤️</div>
+              <div>Love Story</div>
+            </div>
+            <div class="portfolio-overlay"><span class="portfolio-label">⊞ View</span></div>
+          </div>
+          <div class="portfolio-item" onclick="navigateTo('portfolio')">
+            <div class="portfolio-placeholder" style="height:100%;background:linear-gradient(135deg,#1a1a0a,rgba(201,168,76,0.07))">
+              <div class="icon" style="font-size:2rem">🎂</div>
+              <div>Celebration</div>
+            </div>
+            <div class="portfolio-overlay"><span class="portfolio-label">⊞ View</span></div>
+          </div>
+        </div>
+        <div class="text-center mt-6">
+          <button class="btn btn-outline" onclick="navigateTo('portfolio')">View Full Portfolio ✦</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" style="background:var(--bg-dark)">
+      <div class="container">
+        <div class="section-header fade-up">
+          <div class="section-subtitle">✦ Packages</div>
+          <h2 class="section-title">Our <span class="italic-accent">Pricing</span></h2>
+          <div class="gold-divider"></div>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:10px">Final pricing discussed over call. These are starting ranges.</p>
+        </div>
+        <div class="pricing-grid">
+          <!-- Basic -->
+          <div class="card pricing-card fade-up">
+            <div class="pricing-plan-name">Basic</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Perfect for intimate events</div>
+            <div class="pricing-price">₹8,000 <span>onwards</span></div>
+            <ul class="pricing-features">
+              <li>4 hours of coverage</li>
+              <li>100+ edited photos</li>
+              <li>Online gallery delivery</li>
+              <li>1 photographer</li>
+              <li>7-day delivery</li>
+            </ul>
+            <button class="btn btn-outline btn-full" onclick="navigateTo('booking')">Book Basic</button>
+          </div>
+          <!-- Standard -->
+          <div class="card pricing-card card-gold featured fade-up">
+            <div class="pricing-badge">Most Popular</div>
+            <div class="pricing-plan-name">Standard</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Ideal for weddings & events</div>
+            <div class="pricing-price">₹18,000 <span>onwards</span></div>
+            <ul class="pricing-features">
+              <li>8 hours of coverage</li>
+              <li>300+ edited photos</li>
+              <li>HD video highlights (2 min)</li>
+              <li>2 photographers</li>
+              <li>Drone shots (if permitted)</li>
+              <li>10-day delivery</li>
+            </ul>
+            <button class="btn btn-gold btn-full" onclick="navigateTo('booking')">Book Standard</button>
+          </div>
+          <!-- Premium -->
+          <div class="card pricing-card fade-up">
+            <div class="pricing-plan-name">Premium</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">The complete experience</div>
+            <div class="pricing-price">₹35,000 <span>onwards</span></div>
+            <ul class="pricing-features">
+              <li>Full-day coverage</li>
+              <li>500+ edited photos</li>
+              <li>Cinematic film (5 min)</li>
+              <li>3 photographers + videographer</li>
+              <li>Drone + Studio shots</li>
+              <li>Printed photo album</li>
+              <li>14-day delivery</li>
+            </ul>
+            <button class="btn btn-outline btn-full" onclick="navigateTo('booking')">Book Premium</button>
+          </div>
+        </div>
+        <p class="pricing-cta-note">📞 All prices are negotiable. Call us for custom packages!</p>
+        <div class="text-center mt-6">
+          <a href="https://wa.me/919876543210?text=Hi!%20I%20want%20to%20know%20about%20pricing%20packages." target="_blank" class="btn btn-gold">💬 Discuss Pricing on WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials">
+      <div class="container">
+        <div class="section-header fade-up">
+          <div class="section-subtitle">✦ Client Love</div>
+          <h2 class="section-title">What They <span class="italic-accent">Say</span></h2>
+          <div class="gold-divider"></div>
+        </div>
+        <div class="testimonials-slider">
+          <div class="testimonials-track" id="testimonialsTrack">
+
+            <div class="card testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"Lavkush bhai ne humari shaadi ki photography itne achhe se ki hai ki dekhke dil khush ho gaya. Every single photo is a masterpiece. We couldn't be happier!"</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">RK</div>
+                <div>
+                  <div class="testimonial-name">Rajesh & Kavita</div>
+                  <div class="testimonial-event">💍 Wedding • Delhi</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"Our pre-wedding shoot was absolutely magical. He understood exactly what we wanted and delivered beyond our expectations. The golden hour shots are breathtaking!"</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">AM</div>
+                <div>
+                  <div class="testimonial-name">Arjun & Meera</div>
+                  <div class="testimonial-event">❤️ Pre-Wedding • Agra</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"My daughter's birthday party was captured so beautifully. Every smile, every laugh, every moment — preserved forever. Lavkush ji is truly talented!"</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">PS</div>
+                <div>
+                  <div class="testimonial-name">Priya Sharma</div>
+                  <div class="testimonial-event">🎂 Birthday • Noida</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"Our 10th anniversary shoot turned out like a movie. The editing quality is top-notch and delivery was super fast. Highly recommend Trending Photography!"</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">VG</div>
+                <div>
+                  <div class="testimonial-name">Vikram & Gita</div>
+                  <div class="testimonial-event">🥂 Anniversary • Lucknow</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="slider-dots">
+          <button class="slider-dot active"></button>
+          <button class="slider-dot"></button>
+          <button class="slider-dot"></button>
+          <button class="slider-dot"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" style="background:var(--bg-dark)">
+      <div class="container">
+        <div class="section-header fade-up">
+          <div class="section-subtitle">✦ Get In Touch</div>
+          <h2 class="section-title">Contact <span class="italic-accent">Us</span></h2>
+          <div class="gold-divider"></div>
+        </div>
+        <div class="contact-info fade-up">
+          <a href="tel:+919876543210" class="contact-item">
+            <span class="contact-icon">📞</span>
+            <div class="contact-detail">
+              <span class="contact-label">Call Us</span>
+              <span class="contact-value">+91 98765 43210</span>
+            </div>
+          </a>
+          <a href="https://wa.me/919876543210" target="_blank" class="contact-item">
+            <span class="contact-icon">💬</span>
+            <div class="contact-detail">
+              <span class="contact-label">WhatsApp</span>
+              <span class="contact-value">Chat with us anytime</span>
+            </div>
+          </a>
+          <a href="mailto:lavkush@trendingphotography.in" class="contact-item">
+            <span class="contact-icon">✉️</span>
+            <div class="contact-detail">
+              <span class="contact-label">Email</span>
+              <span class="contact-value">lavkush@trendingphotography.in</span>
+            </div>
+          </a>
+          <div class="contact-item" style="cursor:default">
+            <span class="contact-icon">📍</span>
+            <div class="contact-detail">
+              <span class="contact-label">Location</span>
+              <span class="contact-value">Delhi NCR & Pan India</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center fade-up">
+          <a href="https://wa.me/919876543210?text=Hi%20Trending%20Photography!%20I%20want%20to%20book%20a%20session." target="_blank" class="btn btn-gold btn-lg btn-full" style="background:linear-gradient(135deg,#128C7E,#25D366);box-shadow:0 8px 30px rgba(37,211,102,0.35)">
+            💬 Book via WhatsApp
+          </a>
+          <div class="mt-4">
+            <button class="btn btn-gold btn-full" onclick="navigateTo('booking')">
+              📸 Book Online Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="padding:30px 20px;text-align:center;border-top:1px solid var(--border-glass)">
+      <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--gold);margin-bottom:8px">Trending Photography</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px">by Lavkush</div>
+      <div style="font-size:0.7rem;color:var(--text-muted)">✦ Aapki Kahani, Hamari Nazar Se ✦</div>
+      <div style="font-size:0.68rem;color:var(--text-muted);margin-top:16px">© 2025 Trending Photography. All rights reserved.</div>
+    </footer>
+
+  </div><!-- page-content -->
+</div><!-- page home -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE: PORTFOLIO
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page-portfolio">
+  <div class="page-content">
+    <section style="padding-top:90px">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-subtitle">✦ Our Gallery</div>
+          <h2 class="section-title">Our <span class="italic-accent">Portfolio</span></h2>
+          <div class="gold-divider"></div>
+        </div>
+        <div class="portfolio-tabs">
+          <button class="portfolio-tab active" data-cat="All" onclick="renderPortfolio('All')">All</button>
+          <button class="portfolio-tab" data-cat="Wedding" onclick="renderPortfolio('Wedding')">💍 Wedding</button>
+          <button class="portfolio-tab" data-cat="Pre-wedding" onclick="renderPortfolio('Pre-wedding')">❤️ Pre-Wedding</button>
+          <button class="portfolio-tab" data-cat="Events" onclick="renderPortfolio('Events')">🎉 Events</button>
+        </div>
+        <div class="portfolio-grid" id="portfolioGrid"></div>
+        <div class="text-center mt-6" style="padding:0 0 30px">
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">Want to see more? Connect with us!</p>
+          <a href="https://wa.me/919876543210?text=Hi!%20I%20want%20to%20see%20your%20portfolio." target="_blank" class="btn btn-outline">💬 View More on WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE: BOOKING
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page-booking">
+  <div class="page-content">
+    <div class="booking-header">
+      <div class="section-subtitle">✦ Reserve Your Date</div>
+      <h2 class="section-title" style="font-size:1.8rem">Book a <span class="italic-accent">Session</span></h2>
+      <div class="booking-steps">
+        <div class="step active" id="step1">
+          <div class="step-num">1</div>
+          <div class="step-label">Details</div>
+        </div>
+        <div class="step-line" id="stepLine1"></div>
+        <div class="step" id="step2">
+          <div class="step-num">2</div>
+          <div class="step-label">Package</div>
+        </div>
+        <div class="step-line" id="stepLine2"></div>
+        <div class="step" id="step3">
+          <div class="step-num">3</div>
+          <div class="step-label">Confirm</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="padding-bottom:30px">
+
+      <!-- Booking Form -->
+      <div id="bookingForm">
+        <div id="bookingAlert" class="alert"></div>
+        <form onsubmit="handleBooking(event)">
+
+          <!-- Personal Info -->
+          <div class="card" style="padding:20px;margin-bottom:16px">
+            <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:600;margin-bottom:16px;color:var(--gold)">① Personal Information</div>
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input class="form-input" id="bookName" type="text" placeholder="Your full name" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number *</label>
+              <input class="form-input" id="bookPhone" type="tel" placeholder="+91 XXXXX XXXXX" required/>
+              <div class="form-hint">We'll call to confirm your booking</div>
+            </div>
+          </div>
+
+          <!-- Event Details -->
+          <div class="card" style="padding:20px;margin-bottom:16px">
+            <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:600;margin-bottom:16px;color:var(--gold)">② Event Details</div>
+            <div class="form-group">
+              <label class="form-label">Event Type *</label>
+              <select class="form-select" id="bookEvent" required>
+                <option value="">— Select event type —</option>
+                <option>Wedding</option>
+                <option>Pre-wedding</option>
+                <option>Birthday</option>
+                <option>Anniversary</option>
+                <option>Baby Shower</option>
+                <option>Engagement</option>
+                <option>Corporate</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Event Date *</label>
+              <input class="form-input" id="bookDate" type="date" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Venue / Location *</label>
+              <input class="form-input" id="bookLocation" type="text" placeholder="City or specific venue" required/>
+            </div>
+          </div>
+
+          <!-- Package -->
+          <div class="card" style="padding:20px;margin-bottom:16px">
+            <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:600;margin-bottom:16px;color:var(--gold)">③ Choose Package</div>
+            <div class="package-selector">
+              <label class="package-option" data-package="basic">
+                <input type="radio" name="package" value="basic"/>
+                <div class="package-dot"></div>
+                <div class="package-info">
+                  <div class="package-name">Basic</div>
+                  <div class="package-price">From ₹8,000 • 4 hrs • 100+ photos</div>
+                </div>
+              </label>
+              <label class="package-option" data-package="standard">
+                <input type="radio" name="package" value="standard"/>
+                <div class="package-dot"></div>
+                <div class="package-info">
+                  <div class="package-name">Standard ⭐ Popular</div>
+                  <div class="package-price">From ₹18,000 • 8 hrs • 300+ photos + Video</div>
+                </div>
+              </label>
+              <label class="package-option" data-package="premium">
+                <input type="radio" name="package" value="premium"/>
+                <div class="package-dot"></div>
+                <div class="package-info">
+                  <div class="package-name">Premium 👑</div>
+                  <div class="package-price">From ₹35,000 • Full day • 500+ photos + Film + Album</div>
+                </div>
+              </label>
+            </div>
+            <div class="alert alert-info show mt-4" style="font-size:0.78rem">
+              💡 Pricing will be finalised over a call. These are starting prices.
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="card" style="padding:20px;margin-bottom:20px">
+            <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:600;margin-bottom:16px;color:var(--gold)">④ Special Requirements</div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">Notes (Optional)</label>
+              <textarea class="form-textarea" id="bookNotes" placeholder="Special requests, specific shots you want, theme details..."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-full btn-lg">
+            ✦ Request Booking
+          </button>
+          <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:12px">
+            By booking, you agree that we'll contact you to confirm. 
+            <a href="https://wa.me/919876543210" target="_blank" style="color:var(--gold)">Need help?</a>
+          </p>
+        </form>
+      </div>
+
+      <!-- Success State -->
+      <div id="bookingSuccess" class="hidden">
+        <div class="booking-success">
+          <div class="success-icon">🎉</div>
+          <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:700;margin-bottom:10px">Booking Requested!</h2>
+          <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:6px">Your booking ID:</p>
+          <div style="font-family:monospace;font-size:1.3rem;color:var(--gold);font-weight:700;letter-spacing:0.2em;margin-bottom:20px" id="bookingId">—</div>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:28px;line-height:1.6">
+            We've received your booking request! Our team will call you within <strong style="color:var(--text-primary)">2-4 hours</strong> to confirm the details and pricing.
+          </p>
+          <a id="waConfirmBtn" href="#" target="_blank" class="btn btn-full" style="background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;margin-bottom:12px;display:flex;justify-content:center;align-items:center">
+            💬 Share on WhatsApp
+          </a>
+          <button class="btn btn-outline btn-full" onclick="navigateTo('dashboard')">
+            View My Bookings →
+          </button>
+          <button class="btn btn-ghost btn-full mt-4" onclick="location.reload()">
+            + New Booking
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE: AUTH
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page-auth">
+  <div class="auth-page">
+    <div class="card auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">T</div>
+        <h1 class="auth-title">Welcome</h1>
+        <p class="auth-subtitle">Sign in to manage your bookings</p>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-form="loginForm">Sign In</button>
+        <button class="auth-tab" data-form="signupForm">Sign Up</button>
+      </div>
+
+      <!-- Login -->
+      <div class="auth-form active" id="loginForm">
+        <div id="loginAlert" class="alert"></div>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" id="loginEmail" type="email" placeholder="your@email.com" autocomplete="email" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" required/>
+          </div>
+          <button type="submit" class="btn btn-gold btn-full" style="margin-top:8px">Sign In →</button>
+        </form>
+        <div class="auth-divider">or</div>
+        <p style="text-align:center;font-size:0.82rem;color:var(--text-muted)">
+          Don't have an account? <button onclick="document.querySelector('[data-form=signupForm]').click()" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.82rem;font-weight:600">Sign Up</button>
+        </p>
+      </div>
+
+      <!-- Signup -->
+      <div class="auth-form" id="signupForm">
+        <div id="signupAlert" class="alert"></div>
+        <form onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" id="signupName" type="text" placeholder="Your full name" autocomplete="name" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" id="signupEmail" type="email" placeholder="your@email.com" autocomplete="email" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" id="signupPass" type="password" placeholder="Min. 6 characters" autocomplete="new-password" required/>
+          </div>
+          <button type="submit" class="btn btn-gold btn-full" style="margin-top:8px">Create Account →</button>
+        </form>
+        <div class="auth-divider">or</div>
+        <p style="text-align:center;font-size:0.82rem;color:var(--text-muted)">
+          Already have an account? <button onclick="document.querySelector('[data-form=loginForm]').click()" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:0.82rem;font-weight:600">Sign In</button>
+        </p>
+      </div>
+
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border-glass);text-align:center">
+        <p style="font-size:0.75rem;color:var(--text-muted)">
+          📷 Or book without account via <a href="https://wa.me/919876543210" target="_blank" style="color:var(--gold)">WhatsApp</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE: DASHBOARD
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="page-content" style="padding-top:var(--nav-height)">
+
+    <div class="dashboard-header">
+      <div class="dashboard-welcome" id="dashWelcome">Welcome ✨</div>
+      <div class="dashboard-date" id="dashDate"></div>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-section">
+      <div class="card profile-card">
+        <div class="profile-avatar" id="dashAvatar">?</div>
+        <div>
+          <div class="profile-name" id="dashName">—</div>
+          <div class="profile-email" id="dashEmail">—</div>
+        </div>
+        <div style="margin-left:auto">
+          <button class="btn btn-sm btn-danger" onclick="handleLogout()">Sign Out</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="card stat-card">
+        <div class="stat-num" id="statTotal">—</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-num" id="statPending" style="color:#FFA500">—</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-num" id="statConfirmed" style="color:#5ce496">—</div>
+        <div class="stat-label">Confirmed</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-num" id="statCompleted">—</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <!-- Bookings List -->
+    <div style="padding:0 20px 10px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:700">My Bookings</div>
+      <button class="btn btn-sm btn-gold" onclick="navigateTo('booking')">+ New</button>
+    </div>
+    <div class="bookings-list" id="dashBookingsList">
+      <div class="empty-state">
+        <div class="empty-icon">⏳</div>
+        <div class="empty-title">Loading...</div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE: ADMIN
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page-admin">
+  <div class="page-content" style="padding-top:var(--nav-height)">
+
+    <div class="admin-header">
+      <div class="admin-title">
+        Admin Panel
+        <span class="admin-badge">Lavkush</span>
+      </div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Trending Photography Management</div>
+    </div>
+
+    <!-- Admin Stats -->
+    <div class="admin-stats">
+      <div class="card admin-stat">
+        <div class="admin-stat-num" id="adminTotal">—</div>
+        <div class="admin-stat-label">Total</div>
+      </div>
+      <div class="card admin-stat">
+        <div class="admin-stat-num" id="adminPending" style="color:#FFA500">—</div>
+        <div class="admin-stat-label">Pending</div>
+      </div>
+      <div class="card admin-stat">
+        <div class="admin-stat-num" id="adminConfirmed" style="color:#5ce496">—</div>
+        <div class="admin-stat-label">Confirmed</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="admin-filters">
+      <div class="form-group" style="margin-bottom:0">
+        <input class="form-input" id="filterSearch" type="search" placeholder="🔍 Search by name or phone..."/>
+      </div>
+      <div class="filter-row">
+        <select class="form-select" id="filterStatus">
+          <option value="all">All Status</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="confirmed">✅ Confirmed</option>
+          <option value="completed">🏆 Completed</option>
+          <option value="cancelled">❌ Cancelled</option>
+        </select>
+        <select class="form-select" id="filterEvent">
+          <option value="all">All Events</option>
+          <option>Wedding</option>
+          <option>Pre-wedding</option>
+          <option>Birthday</option>
+          <option>Anniversary</option>
+          <option>Baby Shower</option>
+          <option>Engagement</option>
+          <option>Corporate</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <input class="form-input no-min" id="filterDate" type="date" placeholder="Filter by date"/>
+        <button class="btn btn-gold" onclick="loadAdminBookings()">↺ Refresh</button>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="padding:0 20px 16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-gold" onclick="openModal('addBookingModal')">+ Add Manual Booking</button>
+      <button class="btn btn-outline btn-sm" onclick="handleLogout()">Sign Out</button>
+    </div>
+
+    <!-- Bookings List -->
+    <div style="padding:0 20px" id="adminBookingsList">
+      <div class="empty-state">
+        <div class="empty-icon">⏳</div>
+        <div class="empty-title">Loading bookings...</div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+
+  </div>
+</div>
+
+
+<!-- Firebase SDK -->
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>

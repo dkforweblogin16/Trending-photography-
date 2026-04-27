@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Users Collection ──
+    // Users can read/write their own profile only
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Admin can read all users
+      allow read: if request.auth != null && request.auth.token.email == 'lavkush@trendingphotography.in';
+    }
+
+    // ── Bookings Collection ──
+    match /bookings/{bookingId} {
+      // Users can read their own bookings
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+
+      // Users can create bookings (must include their userId)
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasAll(['userId','name','phone','eventType','date','location','package','status','createdAt'])
+        && request.resource.data.status == 'pending';
+
+      // Users cannot update or delete their bookings directly
+
+      // Admin can read all, create, update, delete
+      allow read, write: if request.auth != null
+        && request.auth.token.email == 'lavkush@trendingphotography.in';
+    }
+  }
+}
