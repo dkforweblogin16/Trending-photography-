@@ -2,21 +2,21 @@
 //  TRENDING PHOTOGRAPHY - Firebase & Core JS
 // ============================================
 
-// ─── Firebase Config (Replace with your own) ───
+// ─── Firebase Config 
 const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBu3Hd1N2GzlbFShdD5pRPBEnhC6hAuCZ8",
+  authDomain: "trending-photography.firebaseapp.com",
+  projectId: "trending-photography",
+  storageBucket: "trending-photography.firebasestorage.app",
+  messagingSenderId: "350844014566",
+  appId: "1:350844014566:web:d4f946aea756d51c9a5027"
 };
 
 // Admin email
-const ADMIN_EMAIL = "lavkush@trendingphotography.in";
+const ADMIN_EMAIL = "lavkush.tp@gmail.com";
 
 // WhatsApp number (with country code, no +)
-const WHATSAPP_NUMBER = "919876543210";
+const WHATSAPP_NUMBER = "917479864613";
 
 // ─── Initialize Firebase ───
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
